@@ -26,6 +26,16 @@ SafeQuery looks for the connection string in this order:
 
 Each repo gets its own connection, so different repos can point at different databases.
 
+A repo can also hold several named environments. Pick one with `--env <name>`. Without `--env`, SafeQuery uses `default`, or the only environment if there is just one. A plain string is the `default` environment. A named environment falls back to the `ConnectionStrings__<name>` environment variable, and a missing one is prompted for and saved under that name.
+
+```json
+{
+  "Repositories": {
+    "/Users/me/Github/MyApp": { "default": "Server=dev...;", "prod": "Server=prod...;" }
+  }
+}
+```
+
 ```json
 {
   "Repositories": {
@@ -45,6 +55,7 @@ type query.sql | safequery                     # piped stdin
 
 safequery --create-diagram                     # writes ./InternalDocuments/database-schema.md and .svg
 safequery --create-diagram docs/schema.md      # custom path
+safequery --env prod "select count(*) from dbo.company"  # named environment
 ```
 
 Writes are rejected every time, including inside a transaction.

@@ -10,32 +10,24 @@ public class SqlInputTests : IDisposable
 
     [Fact]
     public void PositionalArgumentIsTheSql() =>
-        Assert.Equal("select 1", SqlInput.Resolve(["select 1"], TextReader.Null, false));
+        Assert.Equal("select 1", SqlInput.Resolve("select 1", null, TextReader.Null, false));
 
     [Fact]
-    public void FileFlagReadsTheFile()
+    public void FileReadsTheFile()
     {
         var path = Path.Combine(_dir, "q.sql");
         File.WriteAllText(path, "select 2");
 
-        Assert.Equal("select 2", SqlInput.Resolve(["-f", path], TextReader.Null, false));
+        Assert.Equal("select 2", SqlInput.Resolve(null, path, TextReader.Null, false));
     }
 
     [Fact]
-    public void FileFlagWinsOverPositionalArgument()
+    public void FileWinsOverPositionalArgument()
     {
         var path = Path.Combine(_dir, "q.sql");
         File.WriteAllText(path, "select 2");
 
-        Assert.Equal("select 2", SqlInput.Resolve(["select 1", "-f", path], TextReader.Null, false));
-    }
-
-    [Fact]
-    public void FileFlagWithoutPathThrows()
-    {
-        var ex = Assert.Throws<InvalidOperationException>(() => SqlInput.Resolve(["-f"], TextReader.Null, false));
-
-        Assert.Equal("-f flag requires a file path argument", ex.Message);
+        Assert.Equal("select 2", SqlInput.Resolve("select 1", path, TextReader.Null, false));
     }
 
     [Fact]
@@ -43,23 +35,23 @@ public class SqlInputTests : IDisposable
     {
         var path = Path.Combine(_dir, "nope.sql");
 
-        var ex = Assert.Throws<InvalidOperationException>(() => SqlInput.Resolve(["-f", path], TextReader.Null, false));
+        var ex = Assert.Throws<InvalidOperationException>(() => SqlInput.Resolve(null, path, TextReader.Null, false));
 
         Assert.Equal($"SQL file not found: {path}", ex.Message);
     }
 
     [Fact]
     public void ReadsStdinWhenRedirectedAndNoArguments() =>
-        Assert.Equal("select 3", SqlInput.Resolve([], new StringReader("select 3"), true));
+        Assert.Equal("select 3", SqlInput.Resolve(null, null, new StringReader("select 3"), true));
 
     [Fact]
     public void ArgumentWinsOverStdin() =>
-        Assert.Equal("select 1", SqlInput.Resolve(["select 1"], new StringReader("select 3"), true));
+        Assert.Equal("select 1", SqlInput.Resolve("select 1", null, new StringReader("select 3"), true));
 
     [Fact]
     public void NoInputAtAllThrows()
     {
-        var ex = Assert.Throws<InvalidOperationException>(() => SqlInput.Resolve([], TextReader.Null, false));
+        var ex = Assert.Throws<InvalidOperationException>(() => SqlInput.Resolve(null, null, TextReader.Null, false));
 
         Assert.StartsWith("No SQL provided.", ex.Message);
     }

@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.13" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.13" />
+    <PackageReference Include="System.CommandLine" Version="3.0.0-rc.2.26504.105" />
     <PackageReference Include="SqlServerToMermaid" Version="2.3.1" />
     <PackageReference Include="Naiad" Version="2.0.1" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />

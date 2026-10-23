@@ -146,6 +146,92 @@ public class ConnectionStringResolverTests : IDisposable
             ConnectionStringResolver.Resolve(SettingsPath, sub, TextReader.Null, TextWriter.Null, true, Env(null)));
     }
 
+    private void WriteEnvironments(string environmentsJson)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath)!);
+        File.WriteAllText(SettingsPath, $$"""{ "Repositories": { {{JsonSerializer.Serialize(WorkDir)}}: {{environmentsJson}} } }""");
+    }
+
+    private string ResolveEnv(string? name, IEnumerable<KeyValuePair<string, string?>>? env = null) =>
+        ConnectionStringResolver.Resolve(SettingsPath, WorkDir, TextReader.Null, TextWriter.Null, true, env ?? Env(null), name);
+
+    [Fact]
+    public void NamedEnvironmentIsPicked()
+    {
+        WriteEnvironments("""{ "dev": "D", "prod": "P" }""");
+
+        Assert.Equal("P", ResolveEnv("prod"));
+        Assert.Equal("D", ResolveEnv("dev"));
+    }
+
+    [Fact]
+    public void NoEnvironmentPicksDefault()
+    {
+        WriteEnvironments("""{ "default": "X", "prod": "P" }""");
+
+        Assert.Equal("X", ResolveEnv(null));
+    }
+
+    [Fact]
+    public void NoEnvironmentPicksTheOnlyOne()
+    {
+        WriteEnvironments("""{ "prod": "P" }""");
+
+        Assert.Equal("P", ResolveEnv(null));
+    }
+
+    [Fact]
+    public void NoEnvironmentWithSeveralAndNoDefaultThrows()
+    {
+        WriteEnvironments("""{ "dev": "D", "prod": "P" }""");
+
+        var ex = Assert.Throws<InvalidOperationException>(() => ResolveEnv(null));
+
+        Assert.Contains("dev, prod", ex.Message);
+        Assert.Contains("--env", ex.Message);
+    }
+
+    [Fact]
+    public void PlainStringIsTheDefaultEnvironment()
+    {
+        WriteSettings("file");
+
+        Assert.Equal("file", ResolveEnv("default"));
+        Assert.Throws<InvalidOperationException>(() => ResolveEnv("prod"));
+    }
+
+    [Fact]
+    public void NamedEnvironmentUsesMatchingEnvironmentVariable()
+    {
+        KeyValuePair<string, string?>[] env = [new("ConnectionStrings:DefaultConnection", "D"), new("ConnectionStrings:prod", "P")];
+
+        Assert.Equal("P", ResolveEnv("prod", env));
+    }
+
+    [Fact]
+    public void PromptSavesUnderEnvironmentAndKeepsExistingDefault()
+    {
+        WriteSettings("file");
+        var prompt = new StringWriter();
+
+        ConnectionStringResolver.Resolve(SettingsPath, WorkDir, new StringReader("P\n"), prompt, false, Env(null), "prod");
+
+        Assert.Contains("No prod connection string", prompt.ToString());
+        Assert.Equal("P", ResolveEnv("prod"));
+        Assert.Equal("file", ResolveEnv(null));
+    }
+
+    [Fact]
+    public void PromptAddsEnvironmentToExistingEnvironments()
+    {
+        WriteEnvironments("""{ "dev": "D" }""");
+
+        ConnectionStringResolver.Resolve(SettingsPath, WorkDir, new StringReader("P\n"), TextWriter.Null, false, Env(null), "prod");
+
+        Assert.Equal("D", ResolveEnv("dev"));
+        Assert.Equal("P", ResolveEnv("prod"));
+    }
+
     [Fact]
     public void OldGlobalEntryIsIgnored()
     {
