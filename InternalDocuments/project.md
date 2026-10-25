@@ -31,7 +31,7 @@ Nuget: publishes the tool package to nuget.org on GitHub release, with the versi
 
 Work through these in order; see the git history for what is done.
 
-1. Repo scaffolding: `.gitattributes`, `AGENTS.md`, this file, `SafeQuery.sln`.
+1. Repo scaffolding: `.gitattributes`, `AGENTS.md`, this file, `SafeQuery.slnx`.
 1. Tests: extract logic out of `Program`, add xunit project (safety filter first).
 1. Safety hardening: deferred, see TODO below.
 1. Build and CI: `build_and_test.sh`, `build.yml`, `publish.yml`, version from tag.
