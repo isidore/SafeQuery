@@ -16,8 +16,9 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>sql;sqlserver;readonly;cli;dotnet-tool;mermaid</PackageTags>
-    <!-- Naiad's SponsorCheck demands a sponsorship license; we explicitly decline (downgrades SC021 error to SC023 warning). -->
-    <Papyrine_SponsorshipLicenseIgnored>true</Papyrine_SponsorshipLicenseIgnored>
+    <!-- Naiad's SponsorCheck: we are a non-revenue open source project. Renew yearly (max 12 months out). -->
+    <Papyrine_SponsorshipExemption>OpenSource</Papyrine_SponsorshipExemption>
+    <Papyrine_SponsorshipExemptionUntil>2027-10</Papyrine_SponsorshipExemptionUntil>
   </PropertyGroup>
 
   <ItemGroup>
