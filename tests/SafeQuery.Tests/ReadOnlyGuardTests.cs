@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 
 namespace SafeQuery.Tests;
 
@@ -14,8 +14,8 @@ public class ReadOnlyGuardTests
     [InlineData("SELECT 1 /* DROP TABLE x; */")]
     [InlineData("SELECT 1 -- DROP TABLE x")]
     [InlineData("SELECT CreatedDate, UpdatedBy FROM t")]
-    public void AcceptsReadOnlyQueries(string sql) =>
-        Assert.True(ReadOnlyGuard.IsReadOnlySelect(sql, out _));
+    public void AcceptsReadOnlyQueries(string sql)
+        => Assert.True(ReadOnlyGuard.IsReadOnlySelect(sql, out _));
 
     [Theory]
     [InlineData(null)]
@@ -23,8 +23,8 @@ public class ReadOnlyGuardTests
     [InlineData("   ")]
     [InlineData("-- only a comment")]
     [InlineData("/* only a comment */")]
-    public void RejectsEmptyQueries(string? sql) =>
-        Assert.False(ReadOnlyGuard.IsReadOnlySelect(sql, out _));
+    public void RejectsEmptyQueries(string? sql)
+        => Assert.False(ReadOnlyGuard.IsReadOnlySelect(sql, out _));
 
     [Theory]
     [InlineData("INSERT INTO t VALUES (1)")]
@@ -69,11 +69,11 @@ public class ReadOnlyGuardTests
 
     // Known gap, tracked in the "Safety hardening" step: the filter does not understand string literals.
     [Fact]
-    public void KnownFalsePositive_KeywordInsideStringLiteral() =>
-        Assert.False(ReadOnlyGuard.IsReadOnlySelect("SELECT * FROM t WHERE name = 'delete'", out _));
+    public void KnownFalsePositive_KeywordInsideStringLiteral()
+        => Assert.False(ReadOnlyGuard.IsReadOnlySelect("SELECT * FROM t WHERE name = 'delete'", out _));
 
     // Known gap: '_' is a word character, so \bsp_\b never matches 'sp_who'.
     [Fact]
-    public void KnownGap_SpPrefixIsNotActuallyBlocked() =>
-        Assert.True(ReadOnlyGuard.IsReadOnlySelect("SELECT * FROM sp_who", out _));
+    public void KnownGap_SpPrefixIsNotActuallyBlocked()
+        => Assert.True(ReadOnlyGuard.IsReadOnlySelect("SELECT * FROM sp_who", out _));
 }

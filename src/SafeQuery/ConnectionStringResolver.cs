@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Configuration;
 
@@ -11,8 +11,8 @@ internal static class ConnectionStringResolver
     private const string ExampleConnectionString =
         "Server=localhost;Database=MyDb;User Id=readonly_user;Password=your_password;TrustServerCertificate=True";
 
-    internal static string DefaultSettingsPath() =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".safequery", "settings.json");
+    internal static string DefaultSettingsPath()
+        => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".safequery", "settings.json");
 
     // Order: the settings-file entry for the nearest directory (from workingDirectory up to its git root),
     // then the ConnectionStrings__DefaultConnection env var, then an interactive prompt (saved under the git root).

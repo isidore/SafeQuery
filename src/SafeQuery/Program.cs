@@ -1,7 +1,7 @@
+﻿using System.CommandLine;
 using DbToMermaid;
 using Microsoft.Data.SqlClient;
 using Naiad;
-using System.CommandLine;
 
 namespace SafeQuery;
 
@@ -158,8 +158,8 @@ public static class Program
         Console.Write(MarkdownTable.Render(columnNames, rows));
     }
 
-    private static string GetConnectionString() =>
-        ConnectionStringResolver.Resolve(
+    private static string GetConnectionString()
+        => ConnectionStringResolver.Resolve(
             ConnectionStringResolver.DefaultSettingsPath(), Directory.GetCurrentDirectory(), Console.In,
             Console.Error,
             Console.IsInputRedirected,

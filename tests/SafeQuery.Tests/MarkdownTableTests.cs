@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 
 namespace SafeQuery.Tests;
 
@@ -27,8 +27,8 @@ public class MarkdownTableTests
     [InlineData("a\r\nb", "a b")]
     [InlineData("a\rb", "a b")]
     [InlineData("", "")]
-    public void EscapesCells(string value, string expected) =>
-        Assert.Equal(expected, MarkdownTable.EscapeCell(value));
+    public void EscapesCells(string value, string expected)
+        => Assert.Equal(expected, MarkdownTable.EscapeCell(value));
 
     [Fact]
     public void PipeInCellDoesNotAddAColumn()

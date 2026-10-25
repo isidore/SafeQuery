@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 
 namespace SafeQuery.Tests;
 
@@ -9,8 +9,8 @@ public class SqlInputTests : IDisposable
     public void Dispose() => Directory.Delete(_dir, recursive: true);
 
     [Fact]
-    public void PositionalArgumentIsTheSql() =>
-        Assert.Equal("select 1", SqlInput.Resolve("select 1", null, TextReader.Null, false));
+    public void PositionalArgumentIsTheSql()
+        => Assert.Equal("select 1", SqlInput.Resolve("select 1", null, TextReader.Null, false));
 
     [Fact]
     public void FileReadsTheFile()
@@ -41,12 +41,12 @@ public class SqlInputTests : IDisposable
     }
 
     [Fact]
-    public void ReadsStdinWhenRedirectedAndNoArguments() =>
-        Assert.Equal("select 3", SqlInput.Resolve(null, null, new StringReader("select 3"), true));
+    public void ReadsStdinWhenRedirectedAndNoArguments()
+        => Assert.Equal("select 3", SqlInput.Resolve(null, null, new StringReader("select 3"), true));
 
     [Fact]
-    public void ArgumentWinsOverStdin() =>
-        Assert.Equal("select 1", SqlInput.Resolve("select 1", null, new StringReader("select 3"), true));
+    public void ArgumentWinsOverStdin()
+        => Assert.Equal("select 1", SqlInput.Resolve("select 1", null, new StringReader("select 3"), true));
 
     [Fact]
     public void NoInputAtAllThrows()

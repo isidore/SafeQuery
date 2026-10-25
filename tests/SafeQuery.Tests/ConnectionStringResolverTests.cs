@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Xunit;
 
 namespace SafeQuery.Tests;
@@ -12,8 +12,8 @@ public class ConnectionStringResolverTests : IDisposable
 
     public void Dispose() => Directory.Delete(_dir, recursive: true);
 
-    private static KeyValuePair<string, string?>[] Env(string? value) =>
-        value is null ? [] : [new("ConnectionStrings:DefaultConnection", value)];
+    private static KeyValuePair<string, string?>[] Env(string? value)
+        => value is null ? [] : [new("ConnectionStrings:DefaultConnection", value)];
 
     private void WriteSettings(string value, string? directory = null)
     {
@@ -23,8 +23,8 @@ public class ConnectionStringResolverTests : IDisposable
     }
 
     [Fact]
-    public void UsesEnvironmentWhenNoFile() =>
-        Assert.Equal("env", ConnectionStringResolver.Resolve(SettingsPath, WorkDir, TextReader.Null, TextWriter.Null, true, Env("env")));
+    public void UsesEnvironmentWhenNoFile()
+        => Assert.Equal("env", ConnectionStringResolver.Resolve(SettingsPath, WorkDir, TextReader.Null, TextWriter.Null, true, Env("env")));
 
     [Fact]
     public void UsesSettingsFileWhenNoEnvironment()
@@ -152,8 +152,8 @@ public class ConnectionStringResolverTests : IDisposable
         File.WriteAllText(SettingsPath, $$"""{ "Repositories": { {{JsonSerializer.Serialize(WorkDir)}}: {{environmentsJson}} } }""");
     }
 
-    private string ResolveEnv(string? name, IEnumerable<KeyValuePair<string, string?>>? env = null) =>
-        ConnectionStringResolver.Resolve(SettingsPath, WorkDir, TextReader.Null, TextWriter.Null, true, env ?? Env(null), name);
+    private string ResolveEnv(string? name, IEnumerable<KeyValuePair<string, string?>>? env = null)
+        => ConnectionStringResolver.Resolve(SettingsPath, WorkDir, TextReader.Null, TextWriter.Null, true, env ?? Env(null), name);
 
     [Fact]
     public void NamedEnvironmentIsPicked()

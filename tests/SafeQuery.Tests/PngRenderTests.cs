@@ -1,4 +1,4 @@
-using Naiad;
+﻿using Naiad;
 using Xunit;
 
 namespace SafeQuery.Tests;

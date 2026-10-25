@@ -1,4 +1,4 @@
-namespace SafeQuery;
+﻿namespace SafeQuery;
 
 internal static class SqlInput
 {

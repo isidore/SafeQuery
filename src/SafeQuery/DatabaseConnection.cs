@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace SafeQuery;
 
@@ -14,8 +14,8 @@ internal static class DatabaseConnection
         return builder;
     }
 
-    internal static string DescribeFailure(SqlConnectionStringBuilder builder, string reason) =>
-        $"Could not connect to '{builder.DataSource}' (database '{builder.InitialCatalog}') within {builder.ConnectTimeout}s. " +
+    internal static string DescribeFailure(SqlConnectionStringBuilder builder, string reason)
+        => $"Could not connect to '{builder.DataSource}' (database '{builder.InitialCatalog}') within {builder.ConnectTimeout}s. " +
         $"Is the server running and reachable? Reason: {reason}";
 
     internal static async Task<SqlConnection> OpenAsync(SqlConnectionStringBuilder builder)
