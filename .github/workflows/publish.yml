@@ -12,7 +12,7 @@ jobs:
       id-token: write # lets GitHub issue the OIDC token for nuget.org trusted publishing
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
       - run: ./build_and_test.sh
