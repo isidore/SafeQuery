@@ -1,0 +1,32 @@
+name: Tidy Code
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  tidy_code:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+    - run: dotnet tool restore
+    - run: ./tidy-code.cmd
+    - name: Check for changes
+      id: git-status
+      shell: bash
+      run: echo "changed=$(git status --porcelain | wc -l)" >> "$GITHUB_OUTPUT"
+    - name: Git Commit and Push
+      if: steps.git-status.outputs.changed != '0'
+      shell: bash
+      run: |
+        git config user.name "Github Actions"
+        git config user.email actions@github.com
+        git add -A
+        git commit -m ". a tidy code"
+        git pull --rebase
+        git push
