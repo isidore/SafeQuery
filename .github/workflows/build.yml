@@ -11,10 +11,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
       - run: ./build_and_test.sh
-      - run: dotnet pack src/SafeQuery -c Release --no-build -o artifacts
+      - run: dotnet pack src/SafeQuery -c Release --no-build -o artifacts -p:Version=0.0.0-ci.${{ github.run_number }}
+      - name: NuGet login
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Publish prerelease
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
