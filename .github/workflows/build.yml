@@ -13,5 +13,5 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - run: dotnet build src/SafeQuery -c Release
+      - run: ./build_and_test.sh
       - run: dotnet pack src/SafeQuery -c Release --no-build -o artifacts
