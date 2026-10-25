@@ -1,6 +1,6 @@
 # SafeQuery
 
-[![build](https://github.com/isidore/SafeQuery/actions/workflows/build.yml/badge.svg)](https://github.com/isidore/SafeQuery/actions/workflows/build.yml)
+[![build-and-test](https://github.com/isidore/SafeQuery/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/isidore/SafeQuery/actions/workflows/build-and-test.yml)
 [![NuGet](https://img.shields.io/nuget/v/SafeQuery.svg)](https://www.nuget.org/packages/SafeQuery)
 [![NuGet downloads](https://img.shields.io/nuget/dt/SafeQuery.svg)](https://www.nuget.org/packages/SafeQuery)
 
