@@ -1,6 +1,7 @@
 using DbToMermaid;
 using Microsoft.Data.SqlClient;
 using Naiad;
+using System.CommandLine;
 
 namespace SafeQuery;
 
@@ -8,18 +9,56 @@ public static class Program
 {
     private const string DefaultDiagramPath = "./InternalDocuments/database-schema.md";
 
+    private static string? _environmentName;
+
     public static async Task<int> Main(string[] args)
     {
-        var diagramIndex = Array.IndexOf(args, "--create-diagram");
-        if (diagramIndex >= 0)
+        var sqlArgument = new Argument<string?>("sql")
         {
-            return await CreateDiagram(args, diagramIndex);
-        }
+            Description = "The SELECT statement to run. Omit it to use -f or stdin.",
+            Arity = ArgumentArity.ZeroOrOne
+        };
+        var fileOption = new Option<string?>("-f")
+        {
+            Description = "Read the SQL from this file.",
+            HelpName = "path"
+        };
+        var envOption = new Option<string?>("--env")
+        {
+            Description = "Use the named connection environment.",
+            HelpName = "name"
+        };
+        var diagramOption = new Option<string?>("--create-diagram")
+        {
+            Description = $"Write a Mermaid schema diagram and SVG (default path: {DefaultDiagramPath}).",
+            HelpName = "path",
+            Arity = ArgumentArity.ZeroOrOne
+        };
 
-        string? sql;
+        var rootCommand = new RootCommand("Read-only SQL Server query CLI.")
+        {
+            sqlArgument, fileOption, envOption, diagramOption
+        };
+        rootCommand.SetAction(async parseResult =>
+        {
+            _environmentName = parseResult.GetValue(envOption);
+            if (parseResult.GetResult(diagramOption) != null)
+            {
+                return await CreateDiagram(parseResult.GetValue(diagramOption) ?? DefaultDiagramPath);
+            }
+
+            return await RunQuery(parseResult.GetValue(sqlArgument), parseResult.GetValue(fileOption));
+        });
+
+        return await rootCommand.Parse(args).InvokeAsync();
+    }
+
+    private static async Task<int> RunQuery(string? sqlArgument, string? filePath)
+    {
+        string sql;
         try
         {
-            sql = SqlInput.Resolve(args, Console.In, Console.IsInputRedirected);
+            sql = SqlInput.Resolve(sqlArgument, filePath, Console.In, Console.IsInputRedirected);
         }
         catch (Exception ex)
         {
@@ -34,7 +73,7 @@ public static class Program
         try
         {
             var connectionString = GetConnectionString();
-            await RunQueryAsync(connectionString, sql!);
+            await RunQueryAsync(connectionString, sql);
             return 0;
         }
         catch (Exception ex)
@@ -53,12 +92,10 @@ public static class Program
         return 1;
     }
 
-    private static async Task<int> CreateDiagram(string[] args, int flagIndex)
+    private static async Task<int> CreateDiagram(string path)
     {
         try
         {
-            var hasPath = flagIndex + 1 < args.Length && !args[flagIndex + 1].StartsWith('-');
-            var path = hasPath ? args[flagIndex + 1] : DefaultDiagramPath;
             // SMO opens its own connection from connection.ConnectionString, which drops the password after Open unless this is set.
             var builder = DatabaseConnection.Prepare(GetConnectionString());
             builder.PersistSecurityInfo = true;
@@ -123,5 +160,8 @@ public static class Program
 
     private static string GetConnectionString() =>
         ConnectionStringResolver.Resolve(
-            ConnectionStringResolver.DefaultSettingsPath(), Directory.GetCurrentDirectory(), Console.In, Console.Error, Console.IsInputRedirected);
+            ConnectionStringResolver.DefaultSettingsPath(), Directory.GetCurrentDirectory(), Console.In,
+            Console.Error,
+            Console.IsInputRedirected,
+            environmentName: _environmentName);
 }

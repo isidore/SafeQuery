@@ -2,31 +2,21 @@ namespace SafeQuery;
 
 internal static class SqlInput
 {
-    internal static string? Resolve(string[] args, TextReader stdin, bool stdinRedirected)
+    internal static string Resolve(string? sql, string? filePath, TextReader stdin, bool stdinRedirected)
     {
-        for (var i = 0; i < args.Length; i++)
+        if (filePath != null)
         {
-            if (args[i] == "-f")
+            if (!File.Exists(filePath))
             {
-                if (i + 1 >= args.Length)
-                {
-                    throw new InvalidOperationException("-f flag requires a file path argument");
-                }
-
-                var path = args[i + 1];
-                if (!File.Exists(path))
-                {
-                    throw new InvalidOperationException($"SQL file not found: {path}");
-                }
-
-                return File.ReadAllText(path);
+                throw new InvalidOperationException($"SQL file not found: {filePath}");
             }
+
+            return File.ReadAllText(filePath);
         }
 
-        var positional = args.FirstOrDefault(a => a != "-f");
-        if (!string.IsNullOrWhiteSpace(positional))
+        if (!string.IsNullOrWhiteSpace(sql))
         {
-            return positional;
+            return sql;
         }
 
         if (stdinRedirected)
