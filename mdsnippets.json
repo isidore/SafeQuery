@@ -1,0 +1,7 @@
+{
+  "OmitSnippetLinks": false,
+  "Convention": "InPlaceOverwrite",
+  "ExcludeMarkdownDirectories": [
+    "tests"
+  ]
+}
