@@ -21,12 +21,12 @@ jobs:
           dotnet-version: 10.0.x
       - run: ./build_and_test.sh
       - run: dotnet pack src/SafeQuery -c Release --no-build -o artifacts -p:Version=0.0.0-ci.${{ github.run_number }}
-      - name: NuGet login
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: login
-        uses: NuGet/login@v1
-        with:
-          user: ${{ secrets.NUGET_USER }}
-      - name: Publish prerelease
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      # - name: NuGet login
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   id: login
+      #   uses: NuGet/login@v1
+      #   with:
+      #     user: ${{ secrets.NUGET_USER }}
+      # - name: Publish prerelease
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
