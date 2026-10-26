@@ -10,7 +10,7 @@
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.13" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.153.1" />
-    <PackageVersion Include="System.CommandLine" Version="3.0.0-rc.2.26504.105" />
+    <PackageVersion Include="System.CommandLine" Version="3.0.0-rc.3.26522.148" />
     <PackageVersion Include="Naiad.Skia" Version="2.0.1" />
     <PackageVersion Include="SqlServerToMermaid" Version="2.4.0" />
     <PackageVersion Include="Naiad" Version="2.0.1" />
