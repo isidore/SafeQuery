@@ -61,10 +61,15 @@ SafeQuery only allows reads, so the agent can look at real data without changing
    - Create a `queries/` folder.
    - Copy this document into the repo.
    - Add the repo to GitHub Desktop.
+1. **Query process**
+   - Write [`query.process.md`](#queryprocessmd) to the repo root.
+1. **Slash commands**
+   - Write [`.claude/skills/new-query/SKILL.md`](#new-query-skill).
+   - Write [`.claude/skills/query/SKILL.md`](#query-skill).
 1. **Agent instructions**
-   - Create a `CLAUDE.md` that tells the agent to:
+   - Create a `CLAUDE.md` that says:
      - Run all SQL with `safequery`.
-     - Follow the [workflow](#workflow) below for each query file.
+     - Work on queries by following `query.process.md`.
 1. **Database connection**
    - Run `safequery "select 1"` in the repo.
    - It prompts for a connection string and saves it for this repo.
@@ -76,15 +81,43 @@ SafeQuery only allows reads, so the agent can look at real data without changing
 
 ## Workflow
 
-1. Create one Markdown file per question, for example `queries/monthly-customer-sales.md`.
-1. Write the **goal** at the top, in plain English.
-1. Mention the tables involved, if you know them.
-1. Describe the **output format**: a Markdown table, a CSV, an HTML chart.
-1. Ask Claude to read the file and ask you anything unclear.
-1. Answer its questions; it updates the file with your answers.
-1. Claude runs the query and gives you the result.
-1. For queries you run often, save the latest SQL next to the file, for example `monthly-customer-sales.sql`.
-   Rerun it yourself with `safequery -f queries/monthly-customer-sales.sql`.
+1. Type `/new-query` and describe what you want to know.
+1. Answer Claude's questions.
+1. Get the result.
+1. Later, type `/query` to pick from your existing queries and run one again.
+
+The details live in `query.process.md`, so you can change how it works by editing one file.
+
+## Files to create
+
+### query.process.md
+
+~~~markdown
+# Query process
+
+Each question about the data gets its own file in `queries/`.
+Run all SQL with `safequery`; it only allows reads.
+
+## New query
+
+1. Ask the user what they want to know.
+1. Create `queries/<kebab-case-name>.md` with these sections:
+   - **Goal**: what the user wants, in plain English.
+   - **Tables**: the tables involved, if known.
+   - **Output**: the format, such as a Markdown table, a CSV or an HTML chart.
+1. Read the file and ask the user anything unclear, one question at a time.
+1. Update the file with each answer.
+1. Write the SQL to `queries/<name>.sql`.
+1. Run it with `safequery -f queries/<name>.sql`.
+1. Produce the output in the requested format.
+
+## Existing queries
+
+1. List every `queries/*.md` as a numbered list, each with its goal.
+1. Add a last item: new query.
+1. Ask the user to pick a number.
+1. For an existing query, check the file is still what the user wants, then run its `.sql` file.
+1. For a new query, follow [New query](#new-query).
 
 ## Example query file
 
@@ -100,3 +133,26 @@ Probably `dbo.Orders` and `dbo.Customers`.
 ## Output
 A CSV with one row per customer and one column per month.
 ```
+~~~
+
+### new-query skill
+
+~~~markdown
+---
+name: new-query
+description: Start a new database query. Use when the user wants to ask a new question of the data.
+---
+
+Follow the **New query** section of `query.process.md`.
+~~~
+
+### query skill
+
+~~~markdown
+---
+name: query
+description: List existing database queries and run or continue one. Use when the user wants to rerun or revisit a query.
+---
+
+Follow the **Existing queries** section of `query.process.md`.
+~~~
