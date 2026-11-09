@@ -10,6 +10,8 @@ It was built so AI coding agents (and humans in a hurry) can look at real data w
 
 > **Safety note:** SafeQuery rejects anything that isn't a single `SELECT`/`WITH` statement and blocks write keywords (`INSERT`, `UPDATE`, `DELETE`, `EXEC`, `INTO`, ...). This is a keyword filter, not a security boundary. Always connect with a database login that only has read permission.
 
+New to this? [Query Repo Setup](docs/QueryRepoSetup.md) walks you (or your AI agent) through setting up a query repo from scratch.
+
 ## Install
 
 ```bash
