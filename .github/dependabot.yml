@@ -6,6 +6,12 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "- r "
+  - package-ecosystem: dotnet-sdk
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "- r "
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
